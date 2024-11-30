@@ -16,6 +16,7 @@ const previousBtn = document.querySelector("section.book-section nav > *:first-c
 const nextBtn = document.querySelector("section.book-section nav > *:last-child")
 const genreLink = document.querySelector("header nav .genre");
 const genreMenu = document.querySelector("header nav #genre-wrapper > ul");
+const statusBox = document.querySelector("#status-box");
 
 let pageNumber = 0;
 const numItemsPerPage = 20;
@@ -65,6 +66,7 @@ function firstResultPageSetup() {
     pageNumber = 0;
     previousBtn.disabled = true;
     nextBtn.disabled = false;
+    statusBox.style.height = `${window.innerHeight - resultSection.getBoundingClientRect().y}px`;
 }
 
 
@@ -139,9 +141,14 @@ function displayBooks(books, startIndex=0) {
     }
 
     if (books.length === 0 || startIndex >= books.length) {
+        const div = document.createElement("div");
+        div.style.height = `${window.innerHeight - resultSection.getBoundingClientRect().y}px`;
+        div.classList.add("status");
+
         const p = document.createElement("p");
         p.textContent = "Sorry, no other results to display";
-        resultSection.appendChild(p);
+        div.appendChild(p);
+        resultSection.appendChild(div);
 
         nextBtn.disabled = true;
     }
@@ -281,9 +288,15 @@ function displayGenres(genres) {
 
         itemLink.addEventListener("click", (event) => {
             event.preventDefault();
+            publishedDateInput.value = "";
             firstResultPageSetup();
             bookSectionHeader.textContent = `${itemLink.textContent}`;
-            params = {...params, genre: itemLink.getAttribute("data-genre-id"), offset: 0};
+            params = {
+                ...params,
+                genre: itemLink.getAttribute("data-genre-id"),
+                publishedDate: "",
+                offset: 0
+            };
             fetchResult();
         })
 

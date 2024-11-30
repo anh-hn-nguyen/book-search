@@ -20,6 +20,7 @@ body {
     max-width: 1200px;
     margin: 0 auto;
     font-family: "Poppins", sans-serif;
+    background-color: antiquewhite;
 }
 
 
@@ -132,7 +133,6 @@ main h2 {
 
 /* Book section */
 
-
 /* Book result section */
 .books-result {
     display: grid;
@@ -140,6 +140,13 @@ main h2 {
     row-gap: 0.5rem;
 }
 
+.books-result div.status {
+    font-size: 3rem;
+    font-weight: 400;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 
 .books-result > a {
     border-radius: 1rem;
