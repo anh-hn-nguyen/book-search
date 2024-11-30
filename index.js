@@ -322,7 +322,7 @@ function checkImages(reviews) {
     }
 
     // if no images are found at all, append images to the first 3 reviews
-    for (i = 0; i < Math.min(3, reviews.length); i++) {
+    for (let i = 0; i < Math.min(3, reviews.length); i++) {
         const review = reviews[i];
         review.multimedia.push({
             url: imageFileNames[i],
