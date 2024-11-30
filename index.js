@@ -370,7 +370,7 @@ function displayReviews(reviews) {
         const img = document.createElement("img");
         const media = review.multimedia[0];
         
-        img.src = (!media.modified) ? `http://www.nytimes.com/${media.url}`: `${media.url}`;
+        img.src = (!media.modified) ? `https://www.nytimes.com/${media.url}`: `${media.url}`;
         img.alt = media.caption;
         divImg.appendChild(img);
         
