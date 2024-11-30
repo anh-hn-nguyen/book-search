@@ -10,7 +10,7 @@ const imageFileNames = ["images/br_1.jpg", "images/br_2.jpg", "images/br_3.jpg"]
 
 const bookSectionHeader = document.querySelector("main .book-section h2");
 const publishedDateInput = document.querySelector("#published-date");
-const resultSection = document.querySelector("section.books-result");
+const bookResultSection = document.querySelector("section.books-result");
 const reviewsResultSection = document.querySelector("section.reviews-result");
 const previousBtn = document.querySelector("section.book-section nav > *:first-child")
 const nextBtn = document.querySelector("section.book-section nav > *:last-child")
@@ -66,7 +66,7 @@ function firstResultPageSetup() {
     pageNumber = 0;
     previousBtn.disabled = true;
     nextBtn.disabled = false;
-    statusBox.style.height = `${window.innerHeight - resultSection.getBoundingClientRect().y}px`;
+    statusBox.style.height = `${window.innerHeight - bookResultSection.getBoundingClientRect().y - 200}px`;
 }
 
 
@@ -136,19 +136,19 @@ function fetchOverview() {
 function displayBooks(books, startIndex=0) {
     // this function displays <= numItemsOnPage
 
-    while (resultSection.firstChild) {
-        resultSection.removeChild(resultSection.firstChild);
+    while (bookResultSection.firstChild) {
+        bookResultSection.removeChild(bookResultSection.firstChild);
     }
 
     if (books.length === 0 || startIndex >= books.length) {
         const div = document.createElement("div");
-        div.style.height = `${window.innerHeight - resultSection.getBoundingClientRect().y}px`;
+        div.style.height = `${window.innerHeight - bookResultSection.getBoundingClientRect().y - 200}px`;
         div.classList.add("status");
 
         const p = document.createElement("p");
         p.textContent = "Sorry, no other results to display";
         div.appendChild(p);
-        resultSection.appendChild(div);
+        bookResultSection.appendChild(div);
 
         nextBtn.disabled = true;
     }
@@ -198,7 +198,7 @@ function displayBooks(books, startIndex=0) {
 
         articleLink.append(article);
 
-        resultSection.appendChild(articleLink);
+        bookResultSection.appendChild(articleLink);
     }
 }
 
