@@ -14,17 +14,24 @@ h2, h3, p {
     margin: 0;
 }
 
+h1, h2 {
+    font-family: "Griffy", system-ui;
+}
+
 /* BODY */
 body {
     width: 100%;
     max-width: 1200px;
     margin: 0 auto;
-    font-family: "Poppins", sans-serif;
+    font-family: "Delius", cursive;
     background-color: antiquewhite;
 }
 
 
 /* Header/navigation */
+header nav {
+    font-size: 1.1rem;
+}
 header img {
     width: 50px;
     height: 50px;
@@ -79,6 +86,7 @@ header nav #genre-wrapper > ul {
     overflow-y: scroll;
     max-height: 300px;
     z-index: 100;
+    font-size: 1rem;
 }
 
 
@@ -112,8 +120,8 @@ header nav #genre-wrapper > ul > li > a:hover {
 /* Heading 1 */
 h1 {
     text-align: center;
-    font-size: 3rem;
-    text-shadow: 10px 10px 3px rgb(128, 128, 128, 80%);
+    font-size: 4rem;
+    filter: drop-shadow(10px 10px 5px rgb(128, 128, 128, 100%));
     color: rgb(154, 69, 154);
     font-style: italic;
 }
@@ -128,7 +136,7 @@ main {
 main h2 {
     font-size: 1.8rem;
     color: rgb(154, 69, 154);
-    /* text-shadow: 5px 5px 8px rgb(154, 69, 154, 0.8); */
+    text-shadow: 5px 5px 40px rgb(154, 69, 154, 0.8);
 }
 
 /* Book section */
