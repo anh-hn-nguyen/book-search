@@ -137,6 +137,7 @@ main h2 {
     font-size: 1.8rem;
     color: rgb(154, 69, 154);
     text-shadow: 5px 5px 40px rgb(154, 69, 154, 0.8);
+    margin-bottom: 0.8rem;
 }
 
 /* Book section */
