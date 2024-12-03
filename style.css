@@ -1,4 +1,8 @@
 /* BASE LINE */
+html {
+    box-sizing: border-box;
+}
+
 ul {
     list-style-type: none;
     padding-left: 0;
