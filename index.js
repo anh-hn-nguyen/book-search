@@ -66,7 +66,6 @@ function firstResultPageSetup() {
     pageNumber = 0;
     previousBtn.disabled = true;
     nextBtn.disabled = false;
-    statusBox.style.height = `${window.innerHeight - bookResultSection.getBoundingClientRect().y - 200}px`;
 }
 
 
@@ -142,7 +141,6 @@ function displayBooks(books, startIndex=0) {
 
     if (books.length === 0 || startIndex >= books.length) {
         const div = document.createElement("div");
-        div.style.height = `${window.innerHeight - bookResultSection.getBoundingClientRect().y - 200}px`;
         div.classList.add("status");
 
         const p = document.createElement("p");

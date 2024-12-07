@@ -26,9 +26,11 @@ h1, h2 {
 body {
     width: 100%;
     max-width: 1200px;
+    height: 100vh;
     margin: 0 auto;
     font-family: "Delius", cursive;
-    background-color: antiquewhite;
+    background-color: #84ceeb;
+    background: linear-gradient(100deg, rgba(86,128,233,1) 10%,rgba(90,185,234,1) 30%,  rgba(132,206,235,1) 45%);
 }
 
 body {
@@ -68,7 +70,7 @@ header > nav > ul > li > a {
 
 
 header > nav ul li a:hover {
-    color: rgb(197, 77, 197);
+    color: white;
 
 }
 
@@ -169,6 +171,11 @@ main h2 {
 }
 
 /* Book section */
+.book-section {
+    display: grid;
+    grid-template-rows: min-content min-content min-content 1fr;
+}
+
 
 /* Book result section */
 .books-result {
@@ -333,7 +340,7 @@ footer {
 }
 
 footer a:hover {
-    color: rgb(197, 77, 197);
+    color: white;
 }
 
 footer p::before {
