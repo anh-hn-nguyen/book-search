@@ -9,19 +9,19 @@ The Shelf allows users to search for New York Times Best Sellers across 100 genr
 
 1. Current Best Sellers accross different genres
 
-![Overview](./images/overall.png)
+![Overview](./public/images/overall.png)
 
 2. Best Sellers filtered by published date
 
-![Overview-dated](./images/overall-dated.png)
+![Overview-dated](./public/images/overall-dated.png)
 
 3. Choose a specific genre
 
-![Choose genere](./images/search-by-genre.png)
+![Choose genere](./public/images/search-by-genre.png)
 
 4. Best Sellers by Children's books genre
 
-![Books by genre](./images/genred.png)
+![Books by genre](./public/images/genred.png)
 
 ## Limitation
 - NYT API Search limit quota

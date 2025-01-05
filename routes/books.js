@@ -1,8 +1,8 @@
 const express = require("express");
-const BookGenre = require("./models/bookgenre");
-const Book = require("./models/book");
-const Author = require("./models/author");
-const Genre = require("./models/genre");
+const BookGenre = require("../models/bookgenre");
+const Book = require("../models/book");
+const Author = require("../models/author");
+const Genre = require("../models/genre");
 
 const router = express.Router();
 
@@ -21,7 +21,6 @@ router.get("/", async function(req, res) {
         .exec();
 
     const bookDocIds = bookDocs.map(doc => doc._id);
-    console.log(bookDocIds.length);
 
     // page: 1-index
     const startDocIndex = (page - 1) * per_page;

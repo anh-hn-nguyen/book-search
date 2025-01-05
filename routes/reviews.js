@@ -3,7 +3,7 @@ require("dotenv").config();
 const express = require("express");
 
 const router = express.Router();
-const Genre = require("./models/genre");
+const Genre = require("../models/genre");
 
 const reviewKey = process.env.NYT_ARTICLE_API_KEY;
 const reviewBaseUrl = process.env.NYT_ARTICLE_API_URL;

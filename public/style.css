@@ -104,6 +104,11 @@ header nav form {
 
 header nav form > :first-child {
     flex: 1;
+    font-size: 1rem;
+}
+
+header nav form button[type="submit"] {
+    cursor: pointer;
 }
 
 /* Genres Menu Popup */

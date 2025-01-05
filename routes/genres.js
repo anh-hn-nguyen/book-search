@@ -1,8 +1,8 @@
 const express = require("express");
-const Genre = require("./models/genre");
-const BookGenre = require("./models/bookgenre");
-const Book = require("./models/book");
-const Author = require("./models/author");
+const Genre = require("../models/genre");
+const BookGenre = require("../models/bookgenre");
+const Book = require("../models/book");
+const Author = require("../models/author");
 
 const router = express.Router();
 

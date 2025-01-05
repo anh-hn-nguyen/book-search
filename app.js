@@ -1,9 +1,9 @@
 require("dotenv").config();
 const express = require("express");
-const genre = require("./genres");
-const book = require("./books");
-const review = require("./reviews");
-const author = require("./authors");
+const genre = require("./routes/genres");
+const book = require("./routes/books");
+const review = require("./routes/reviews");
+const author = require("./routes/authors");
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -18,7 +18,7 @@ mongoose.connect(mongoDB)
     .then(() => console.log("Successfully connected to db"))
     .catch((error) => console.log(error));
 
-app.use(express.static("public"));
+app.use(express.static("public/dist"));
 
 app.use("/genres", genre);
 app.use("/books", book);
