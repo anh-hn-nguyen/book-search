@@ -1,15 +1,11 @@
-// Global
-const key = "kkOEmG1rghZxj6iDArqzk97OHLJVFY3l";
-const reviewKey = "Op54d2FsMAlDvaioUvY6pzofTCme2pPH";
-
-const bookBaseUrl = "https://api.nytimes.com/svc/books/v3/lists";
-const reviewBaseUrl = "https://api.nytimes.com/svc/search/v2/articlesearch.json";
-// const mockBaseUrl = "http://localhost:5500/book-search/db";
-
+const baseUrl = `${document.location.origin}`;
 const imageFileNames = ["images/br_1.jpg", "images/br_2.jpg", "images/br_3.jpg"];
 
 const bookSectionHeader = document.querySelector("main .book-section h2");
 const publishedDateInput = document.querySelector("#published-date");
+const authorSearchInput = document.querySelector("#authorSearch");
+const authorSuggestionsDataList = document.querySelector("#authorSuggestions");
+const searchSubmitBtn = document.querySelector("#searchSubmit");
 const bookResultSection = document.querySelector("section.books-result");
 const reviewsResultSection = document.querySelector("section.reviews-result");
 const previousBtn = document.querySelector("section.book-section nav > *:first-child")
@@ -19,20 +15,22 @@ const genreMenu = document.querySelector("header nav #genre-wrapper > ul");
 const statusBox = document.querySelector("#status-box");
 
 let pageNumber = 0;
-const numItemsPerPage = 20;
-let allBooks = []; // overview books
-let params = {
-    publishedDate: "",
-    selectedGenre: "",
-    offset: 0
-};
+const numItemsPerPage = 10;
 
-publishedDateInput.addEventListener("input", (event) => {
-    firstResultPageSetup();
+let selectedGenre  = "";
+let selectedAuthor = "";
+let authorQuery = "";
 
-    params = {...params, publishedDate: `${event.target.value}-01`};
-    fetchResult();
-})
+let authorSearchTimer = null;
+
+function reset() {
+    selectedAuthor = "";
+    selectedGenre = "";
+    authorQuery = "";
+    pageNumber = 1;
+    previousBtn.disabled = true;
+    nextBtn.disabled = false;
+}
 
 genreLink.addEventListener("click", (event) => {
     event.preventDefault();
@@ -54,30 +52,81 @@ document.addEventListener("click", (event) => {
 
 
 
-function fetchResult() {
-    if (params.genre) {
-        fetchByGenre();
-    } else {
-        fetchOverview();
+authorSearchInput.addEventListener("input", (event) => {
+    clearTimeout(authorSearchTimer);
+
+    const inputValue = event.target.value;
+    authorSearchTimer = setTimeout(()=> {
+        fetchAuthors(inputValue);
+    }, 500);
+})
+
+searchSubmitBtn.addEventListener("click", handleSearchSubmit);
+
+async function handleSearchSubmit(event) {
+    const value = authorSearchInput.value.trim().toLowerCase();
+    if (!value) return;
+
+    event.preventDefault();
+
+    reset();
+    authorQuery = value.split(/\s+/).join("+");
+    
+    fetchBooks();
+
+}
+
+
+function fetchAuthors(q = "") {
+    let url = `${baseUrl}/authors`;
+    if (q) {
+        url += `?q=${q.trim().split(/\s+/).join("+")}`;
+    }
+
+    fetch(url)
+        .then((res) => {
+            if (!res.ok) {
+                throw new Error(`HTTP Error: ${res.statusText}`);
+            }
+            return res.json();
+        })
+        .then((json) => {
+            displayAuthors(json["items"]);
+        })
+    
+}
+
+function displayAuthors(items) {
+    while (authorSuggestionsDataList.firstChild) {
+        authorSuggestionsDataList.removeChild(authorSuggestionsDataList.firstChild);
+    }
+
+    for (const item of items) {
+        const option = document.createElement("option");
+        option.value = item["name"];
+
+        authorSuggestionsDataList.appendChild(option);
     }
 }
 
-function firstResultPageSetup() {
-    pageNumber = 0;
-    previousBtn.disabled = true;
-    nextBtn.disabled = false;
-}
+function fetchBooks() {
+    // select path to fetch
+    let url = `${baseUrl}/books`;
 
-
-function fetchByGenre() {
-    const { genre, offset } = params;
-
-    let publishedDate = params.publishedDate ? params.publishedDate: "current";
+    if (selectedGenre) {
+        url = `${baseUrl}/genres/${selectedGenre}/books`;
+    }
+    if (selectedAuthor) {
+        url = `${baseUrl}/authors/${selectedAuthor}/books`;
+    }
     
-    let url = `${bookBaseUrl}/${publishedDate}/${genre}?offset=${offset}&api-key=${key}`;
+    // add query params
+    url += `?page=${pageNumber}&per_page=${numItemsPerPage}`;
 
-    // MOCK URL
-    // url = `${mockBaseUrl}/chilren-books.json`;
+    if (!selectedGenre && !selectedAuthor && authorQuery) {
+        url += `&author=${authorQuery}`;
+    }
+
 
     fetch(url)
         .then((response) => {
@@ -87,59 +136,27 @@ function fetchByGenre() {
             return response.json();
         })
         .then ((json) => {
-            const books = json["num_results"] === 0 ? [] : json["results"]["books"];
-            displayBooks(books);
+            // check whether this is last page
+            nextBtn.disabled = (pageNumber * numItemsPerPage) >= json["total_count"];
+            displayBooks(json["items"]);
         })
         .catch((e) => console.error(e));
 
-    fetchReviews();
-}
-
-// if no genre indicated, display overview top 5 books in each genre
-function fetchOverview() {
-    let url = `${bookBaseUrl}/overview.json?api-key=${key}`;
-
-    if (params.publishedDate) {
-        url += `&published_date=${params.publishedDate}`;
+    if (pageNumber === 1) {
+        fetchReviews();
     }
 
-    // MOCK URL
-    // url = `${mockBaseUrl}/overview-books.json`;
-
-    fetch(url)
-        .then((response) => {
-            if (!response.ok) {
-                throw new Error(`${response.statusText}`);
-            }
-            return response.json();
-        })
-        .then((json) => {
-            // extract the list of books
-            allBooks = [];
-            for (const list of json["results"]["lists"]) {
-                for (const book of list["books"]) {
-                    book["genre"] = list["display_name"];
-                    allBooks.push(book);
-                }
-            }
-            // display the books
-            displayBooks(allBooks);
-
-        })
-        .catch((e) => console.error(e));
-
-    fetchReviews();
-
 }
 
-function displayBooks(books, startIndex=0) {
+
+function displayBooks(items) {
     // this function displays <= numItemsOnPage
 
     while (bookResultSection.firstChild) {
         bookResultSection.removeChild(bookResultSection.firstChild);
     }
 
-    if (books.length === 0 || startIndex >= books.length) {
+    if (items.length === 0) {
         const div = document.createElement("div");
         div.classList.add("status");
 
@@ -147,15 +164,11 @@ function displayBooks(books, startIndex=0) {
         p.textContent = "Sorry, no other results to display";
         div.appendChild(p);
         bookResultSection.appendChild(div);
-
-        nextBtn.disabled = true;
     }
 
-    const endIndex = Math.min(startIndex + numItemsPerPage, books.length);
 
-    for (let i = startIndex; i < endIndex; i++) {
-        const book = books[i];
-
+    for (const item of items) {
+        const book = item["book"];
         const articleLink = document.createElement("a");
         articleLink.href = book["amazon_product_url"];
         articleLink.target = "_blank";
@@ -174,7 +187,7 @@ function displayBooks(books, startIndex=0) {
         h3.textContent = book["title"];
 
         const authorPara = document.createElement("p");
-        authorPara.textContent = `by ${book["author"]}`;
+        authorPara.textContent = `by ${book["author"]["name"]}`;
 
         // description
         const descPara = document.createElement("p");
@@ -185,14 +198,11 @@ function displayBooks(books, startIndex=0) {
         article.appendChild(authorPara);
         article.appendChild(descPara);
 
-        // (optional) genre
-        if (book["genre"]) {
-            const genrePara = document.createElement("p");
-            genrePara.textContent = book["genre"];
-            genrePara.setAttribute("class", "genre-name");
-            article.appendChild(genrePara);
-        }
-       
+        const genrePara = document.createElement("p");
+        genrePara.textContent = item["genre"]["display_name"];
+        genrePara.setAttribute("class", "genre-name");
+        article.appendChild(genrePara);
+        
 
         articleLink.append(article);
 
@@ -208,14 +218,8 @@ nextBtn.addEventListener("click", (event) => {
     // enable previous btn
     previousBtn.disabled = false;
 
-    // load next 20 for overview
-    const offset = pageNumber * numItemsPerPage;
-    if (params.genre) {
-        params = {...params, offset: offset};
-        fetchByGenre();
-    } else {
-        displayBooks(allBooks, offset);
-    }
+    fetchBooks();
+    
 
 })
 
@@ -226,25 +230,16 @@ previousBtn.addEventListener("click", (event) => {
     // enable next btn
     nextBtn.disabled = false;
 
-    if (pageNumber == 0) {
+    if (pageNumber == 1) {
         previousBtn.disabled = true;
     }
 
-    const offset = pageNumber * numItemsPerPage;
-
-    if (params.genre) {
-        params = {...params, offset: offset};
-        fetchByGenre();
-    } else {
-        displayBooks(allBooks, offset);
-    }
+   fetchBooks();
 })
 
 function fetchGenres() {
-    let url = `${bookBaseUrl}/names.json?api-key=${key}`;
+    let url = `${baseUrl}/genres`;
 
-    // MOCK URL
-    // url = `${mockBaseUrl}/genres.json`;
 
     fetch(url)
         .then((response) => {
@@ -254,15 +249,12 @@ function fetchGenres() {
             return response.json();
         })
         .then((json) => {
-            if (json["num_results"] > 0) {
-                displayGenres(json["results"]);
-
-            }
+            displayGenres(json["items"]);
+            
         })
 }
 
 function displayGenres(genres) {
-    // genres = genres.filter(item => item["display_name"].length <= 30);
     
     // menu position
     const parent = genreMenu.parentElement;
@@ -281,21 +273,15 @@ function displayGenres(genres) {
         const listItem = document.createElement("li");
         const itemLink = document.createElement("a");
         itemLink.href = "";
-        itemLink.setAttribute("data-genre-id", genre["list_name_encoded"]);
+        itemLink.setAttribute("data-genre-id", genre._id);
         itemLink.textContent = genre["display_name"];
 
         itemLink.addEventListener("click", (event) => {
             event.preventDefault();
-            publishedDateInput.value = "";
-            firstResultPageSetup();
+            reset();
             bookSectionHeader.textContent = `${itemLink.textContent}`;
-            params = {
-                ...params,
-                genre: itemLink.getAttribute("data-genre-id"),
-                publishedDate: "",
-                offset: 0
-            };
-            fetchResult();
+            selectedGenre = itemLink.getAttribute("data-genre-id");
+            fetchBooks();
         })
 
         listItem.appendChild(itemLink);
@@ -305,13 +291,11 @@ function displayGenres(genres) {
 }
 
 function fetchReviews() {
-    let url = `${reviewBaseUrl}?api-key=${reviewKey}&fq=news_desk%3A(%22Books%22)%20AND%20type_of_material%3A(%22Review%22)`;
-    if (params.genre) {
-        url += `&q=${params.genre}`;
-    }
+    let url = `${baseUrl}/reviews`;
 
-    // MOCK URL
-    // url = `${mockBaseUrl}/reviews.json`;
+    if (selectedGenre) {
+        url += `?genreId=${selectedGenre}`;
+    }
 
     fetch(url)
         .then((response) => {
@@ -401,9 +385,9 @@ function displayReviews(reviews) {
 }
 
 function initialize() {
+    reset();
     fetchGenres();
-    firstResultPageSetup();
-    fetchOverview();
+    fetchBooks();
 }
 
 
