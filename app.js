@@ -6,7 +6,7 @@ const review = require("./reviews");
 const author = require("./authors");
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 
 // set up database connection
 const mongoose = require("mongoose");
