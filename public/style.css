@@ -63,11 +63,23 @@ header nav > ul > :not(:first-child) {
     padding: 1rem;
 }
 
+header nav > ul > :nth-last-child(2) {
+    width: 30%;
+}
+
+header nav form > p:first-child > * {
+    width: 100%;
+}
+
+header nav form p > * {
+    font-family: inherit;
+    padding: 5px;
+    border-radius: 5px;
+}
 /* Link in nav */
 header > nav > ul > li > a {
     display: block;
 }
-
 
 header > nav ul li a:hover {
     color: white;
@@ -85,6 +97,14 @@ header nav .genre::after {
     margin-left: 2px;
 }
 
+
+header nav form {
+    display: flex;
+}
+
+header nav form > :first-child {
+    flex: 1;
+}
 
 /* Genres Menu Popup */
 header nav #genre-wrapper {
@@ -181,6 +201,7 @@ main h2 {
 .books-result {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    grid-auto-rows: min-content;
     row-gap: 0.5rem;
 }
 

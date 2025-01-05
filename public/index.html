@@ -9,7 +9,7 @@
         <link href="https://fonts.googleapis.com/css2?family=Delius&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="style.css">
         <link rel="icon" href="images/icon.png">
-        <script src="index.js" type="module"></script>
+        <script src="index.js" defer></script>
     </head>
     <body>
         <header>
@@ -21,7 +21,17 @@
                         <a href="" class="genre">Genre</a>
                         <ul class="inactive"></ul>
                     </li>
-                    <li><a href="#">Reviews</a></li>
+                    <li>
+                        <form>
+                            <p>
+                                <input type="search" name="author" placeholder="Search by author" id="authorSearch" list="authorSuggestions" required>
+                                <datalist id="authorSuggestions"></datalist>
+                            </p>
+                            <p>
+                                <button type="submit" id="searchSubmit">Search</button>
+                            </p>
+                        </form>
+                    </li>
                     <li><a href="#">About</a></li>
                 </ul>
             </nav>
@@ -33,14 +43,7 @@
             <section class="book-section">
                 <h2>Books</h2>
 
-                <!-- Search Form -->
-                <form>                    
-                    <p>
-                        <label for="published-date">Published date:</label>
-                        <input type="month" id="published-date" min="2010-01">
-                    </p>
 
-                </form>
                 <!-- Pagination -->
                 <nav>
                     <button type="submit">Previous</button>
