@@ -2,7 +2,6 @@ const baseUrl = `${document.location.origin}`;
 const imageFileNames = ["images/br_1.jpg", "images/br_2.jpg", "images/br_3.jpg"];
 
 const bookSectionHeader = document.querySelector("main .book-section h2");
-const publishedDateInput = document.querySelector("#published-date");
 const authorSearchInput = document.querySelector("#authorSearch");
 const authorSuggestionsDataList = document.querySelector("#authorSuggestions");
 const searchSubmitBtn = document.querySelector("#searchSubmit");
@@ -12,7 +11,6 @@ const previousBtn = document.querySelector("section.book-section nav > *:first-c
 const nextBtn = document.querySelector("section.book-section nav > *:last-child")
 const genreLink = document.querySelector("header nav .genre");
 const genreMenu = document.querySelector("header nav #genre-wrapper > ul");
-const statusBox = document.querySelector("#status-box");
 
 let pageNumber = 0;
 const numItemsPerPage = 10;
@@ -30,6 +28,7 @@ function reset() {
     pageNumber = 1;
     previousBtn.disabled = true;
     nextBtn.disabled = false;
+    authorSearchInput.value = "";
 }
 
 genreLink.addEventListener("click", (event) => {
@@ -64,13 +63,15 @@ authorSearchInput.addEventListener("input", (event) => {
 searchSubmitBtn.addEventListener("click", handleSearchSubmit);
 
 async function handleSearchSubmit(event) {
-    const value = authorSearchInput.value.trim().toLowerCase();
-    if (!value) return;
+    const value = authorSearchInput.value;
+    const trimmedValue = value.trim().toLowerCase();
+    if (!trimmedValue) return;
 
     event.preventDefault();
 
     reset();
-    authorQuery = value.split(/\s+/).join("+");
+    authorQuery = trimmedValue.split(/\s+/).join("+");
+    authorSearchInput.value = value;
     
     fetchBooks();
 
